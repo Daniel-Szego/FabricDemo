@@ -1,0 +1,27 @@
+{
+    "name": "test",
+    "version": "1.0.0",
+    "description": "e-cert generation",
+    "engines": {
+        "node": ">=8",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "npm run lint",
+        "test": "nyc mocha --recursive",
+        "registerex": "node registerUserEx.js",
+        "enrollex": "node enrollAdminEx.js",
+        "put": "node PutState.js",
+        "putkey": "node PutStateKey.js",
+        "get": "node GetState.js",
+        "getkey": "node GetStateKey.js"
+    },
+    "engineStrict": true,
+    "author": "Hyperledger",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "fabric-ca-client": "^2.2.0",
+        "fabric-network": "^2.2.0"
+    }
+}

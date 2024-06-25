@@ -1,0 +1,81 @@
+{
+    "name": "test",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Org1MSP",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Org1MSP": {
+            "mspid": "Org1MSP",
+            "peers": [
+                 "peer0.org1.test.hu"
+            ],
+            "certificateAuthorities": [
+                "ca.org1.test.hu"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.org1.test.hu": {
+            "url": "grpcs://localhost:7051",
+            "tlsCACerts": {
+                "path": "/home/dsz/git/fabrictraining/crypto-config/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org1.test.hu",
+                 "hostnameOverride": "peer0.org1.test.hu"
+            }
+         }
+    },
+    "certificateAuthorities": {
+        "ca.org1.test.hu": {
+            "url": "http://localhost:7054",
+            "caName": "ca.org1.test.hu",
+            "tlsCACerts": {
+                "path": "/home/dsz/git/fabrictraining/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem"
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    },
+    "orderers": {
+        "orderer.test.hu": {
+          "url": "grpcs://localhost:7050",
+           "tlsCACerts": {
+                "path": "/home/dsz/git/fabrictraining/crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/tls/ca.crt"
+           },
+           "grpcOptions": {
+            "ssl-target-name-override": "orderer.test.hu",
+            "hostnameOverride": "orderer.test.hu"
+          }
+        },
+        "orderer1.test.hu": {
+            "url": "grpcs://localhost:7060",
+            "tlsCACerts": {
+              "path": "/home/dsz/git/fabrictraining/crypto-config/ordererOrganizations/test.hu/orderers/orderer1.test.hu/tls/ca.crt"
+              },
+            "grpcOptions": {
+              "ssl-target-name-override": "orderer1.test.hu",
+              "hostnameOverride": "orderer1.test.hu"
+            }
+          },
+          "orderer2.test.hu": {
+             "url": "grpcs://localhost:7070",
+             "tlsCACerts": {
+                 "path": "/home/dsz/git/fabrictraining/crypto-config/ordererOrganizations/test.hu/orderers/orderer2.test.hu/tls/ca.crt"
+              },
+             "grpcOptions": {
+              "ssl-target-name-override": "orderer2.test.hu",
+              "hostnameOverride": "orderer2.test.hu"
+            }
+          }  
+    }
+}

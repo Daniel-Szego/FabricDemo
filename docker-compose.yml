@@ -1,0 +1,404 @@
+
+version: '2.1'
+
+volumes:
+  ca-vm:
+  orderer-vm:
+  orderer1-vm:
+  orderer2-vm:
+  peer-vm:
+  couchdb-vm:
+  explorerdb-vm:
+  explorer-vm:
+  prometheus-vm:
+  granafa-vm:
+
+networks:
+  test-net:
+
+services:
+
+  ca.org1.test.hu:
+    image: hyperledger/fabric-ca:latest
+    container_name: ca.org1.test.hu
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.org1.test.hu
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.test.hu-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/priv_sk
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tls/tlsca.org1.test.hu-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tls/priv_sk
+      - FABRIC_CA_SERVER_PORT=7054
+      - FABRIC_CA_SERVER_METRICS_PROVIDER=prometheus
+      - FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:9444
+    ports:
+      - "7054:7054"
+      - "9444:9444"
+    command: sh -c 'fabric-ca-server start -b test:Blockchain4ever -d --ca.certfile /ca/ca.org1.test.hu-cert.pem --ca.keyfile /ca/priv_sk --tls.certfile /tlsca/tlsca.org1.test.hu-cert.pem --tls.keyfile /tlsca/priv_sk'
+    volumes:
+      - ca-vm:/etc/hyperledger/fabric-ca-server
+      - ./crypto-config/peerOrganizations/org1.test.hu/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/org1.test.hu/tlsca/:/etc/hyperledger/fabric-ca-server-tls
+      - ./crypto-config/peerOrganizations/org1.test.hu/ca/:/ca/ 
+      - ./crypto-config/peerOrganizations/org1.test.hu/tlsca/:/tlsca/ 
+    networks:
+      - test-net
+
+  orderer.test.hu:
+    container_name: orderer.test.hu
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=WARNING
+      - FABRIC_LOGGING_SPEC=WARNING
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+#      - ORDERER_ADMIN_TLS_ENABLED=true
+#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+#      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 7050:7050
+      - 8443:8443
+#      - 9443:9443
+    volumes:
+        - ./config/genesis.block:/var/hyperledger/orderer/genesis.block
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/tls:/var/hyperledger/orderer/tls
+        - orderer-vm:/var/hyperledger/production/orderer
+    networks:
+      - test-net
+
+  orderer1.test.hu:
+    container_name: orderer1.test.hu
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=WARNING
+      - FABRIC_LOGGING_SPEC=WARNING
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+#      - ORDERER_ADMIN_TLS_ENABLED=true
+#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+#      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 7060:7050
+      - 8453:8443
+ #     - 9453:9443
+    volumes:
+        - ./config/genesis.block:/var/hyperledger/orderer/genesis.block
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer1.test.hu/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer1.test.hu/tls:/var/hyperledger/orderer/tls
+        - orderer1-vm:/var/hyperledger/production/orderer
+    networks:
+      - test-net
+
+  orderer2.test.hu:
+    container_name: orderer2.test.hu
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=WARNING
+      - FABRIC_LOGGING_SPEC=WARNING
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_KAFKA_VERBOSE=true      
+      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_TLS_ENABLED=true
+#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command: orderer
+    ports:
+      - 7070:7050
+      - 8463:8443
+      - 9463:9443
+    volumes:
+        - ./config/genesis.block:/var/hyperledger/orderer/genesis.block
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer2.test.hu/msp:/var/hyperledger/orderer/msp
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer2.test.hu/tls:/var/hyperledger/orderer/tls
+        - orderer2-vm:/var/hyperledger/production/orderer
+    networks:
+      - test-net
+
+  peer0.org1.test.hu:
+    container_name: peer0.org1.test.hu
+    image: hyperledger/fabric-peer:latest
+    dns_search: .
+    environment:
+      - CORE_CHAINCODE_EXECUTETIMEOUT=300s
+      - CORE_CHAINCODE_DEPLOYTIMEOUT=300s
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabrictraining_test-net
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt
+#      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/tlsintermediatecerts/tls-ca-test-hu-7056.pem
+      - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_ID=peer0.org1.test.hu
+      - CORE_PEER_ADDRESS=peer0.org1.test.hu:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.test.hu:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org1.test.hu:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.test.hu:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.test.hu:7051
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.org1.test.hu:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=HTCouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=Blockchain4ever
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9443
+#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0.org1.test.hu"}
+#      - CORE_CHAINCODE_EXTERNALBUILDERS_PATH=/external-builder
+#      - CORE_CHAINCODE_EXTERNALBUILDERS_NAME=external-builder
+      - CORE_PEER_GATEWAY_ENABLED=true
+      - CORE_PEER_GATEWAY_ENDORSEMENTTIMEOUT=60s
+      - CORE_PEER_GATEWAY_DIALTIMEOUT=2m
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    # command: peer node start --peer-chaincodedev=true
+    ports:
+      - 7051:7051
+      - 7053:7053
+      - 9543:9443
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/msp:/etc/hyperledger/crypto/peer/msp
+        - ./crypto-config/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls:/etc/hyperledger/crypto/peer/tls
+#        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/msp:/etc/hyperledger/crypto/orderer/msp
+        - ./crypto-config/peerOrganizations/org1.test.hu/users:/etc/hyperledger/users/
+        - ./core/:/etc/hyperledger/fabric
+        - peer-vm:/var/hyperledger/production
+    depends_on:
+      - orderer.test.hu
+      - orderer1.test.hu
+      - orderer2.test.hu
+      - couchdb0.org1.test.hu
+    networks:
+      - test-net
+
+  couchdb0.org1.test.hu:
+    container_name: couchdb0.org1.test.hu
+    image: couchdb:3.3.3
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=HTCouchDB
+      - COUCHDB_PASSWORD=Blockchain4ever
+    ports:
+      - 5984:5984
+    volumes:
+      - couchdb-vm:/opt/couchdb/data
+    networks:
+      - test-net
+
+  cli.org1.test.hu:
+    container_name: cli.org1.test.hu
+    image: hyperledger/fabric-tools:latest
+    tty: true
+    dns_search: .
+    environment:
+      - GOPATH=/opt/gopath
+      - FABRIC_LOGGING_SPEC=WARNING
+      - CORE_PEER_ID=peer0.org1.test.hu
+      - CORE_PEER_ADDRESS=peer0.org1.test.hu:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.test.hu/users/Admin@org1.test.hu/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./config/:/etc/hyperledger/channel/
+        - ./core/:/var/hyperledger/config
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/msp:/etc/hyperledger/crypto/orderer/msp
+        - ./crypto-config/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls:/etc/hyperledger/crypto/peer/tls
+        - ./chaincode:/chaincode
+    networks:
+      - test-net
+    depends_on:
+      - orderer.test.hu
+      - orderer1.test.hu
+      - orderer2.test.hu
+      - peer0.org1.test.hu
+      - couchdb0.org1.test.hu
+
+#  chaincode.org1.test.hu:
+#    image: test:02
+#    environment:
+#      - CHAINCODE_CCID=test:f3205c07fcf7b773869dcbcf0d9f0a518f488f2c2b68499e8a39f236b1c118f7
+#      - CHAINCODE_ADDRESS=chaincode.org1.test.hu:7052
+#    ports:
+#      - "7052:7052"
+#    container_name: chaincode.org1.test.hu
+#    hostname: chaincode.org1.test.hu
+#    networks:
+#     - test-net
+
+#  dal.org1.test.hu:
+#    container_name: dal.org1.test.hu
+#    image: dal:01
+#    networks:
+#      - test-net
+#    volumes:
+#        - ./crypto-config/peerOrganizations/test.hu/peers/peer0.org1.test.hu/msp:/etc/hyperledger/crypto/peer/msp
+#        - ./crypto-config/peerOrganizations/test.hu/peers/peer0.org1.test.hu/tls:/etc/hyperledger/crypto/peer/tls
+#        - ./crypto-config/peerOrganizations/test.hu/users/:/etc/hyperledger/crypto/peer/users
+#        - ./crypto-config/peerOrganizations/test.hu/ca/:/etc/hyperledger/crypto/peer/ca
+#        - ./crypto-config/ordererOrganizations/test.hu/orderers:/etc/hyperledger/crypto/orderers
+
+#  explorerdb.test.hu:
+#    image: hyperledger/explorer-db:1.1.3
+#    container_name: explorerdb.test.hu
+#    hostname: explorerdb.test.hu
+#    environment:
+#      - DATABASE_DATABASE=fabricexplorer
+#      - DATABASE_USERNAME=hppoc
+#      - DATABASE_PASSWORD=Blockchain4ever
+#    healthcheck:
+#      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+#    volumes:
+#      - explorerdb-vm:/var/lib/postgresql/data
+#    networks:
+#      - test-net
+
+#  explorer.test.hu:
+#    image: hyperledger/explorer:1.1.3
+#    container_name: explorer.test.hu
+#    hostname: explorer.test.hu
+#    environment:
+#      - DATABASE_HOST=explorerdb.test.hu
+#      - DATABASE_DATABASE=fabricexplorer
+#      - DATABASE_USERNAME=hppoc
+#      - DATABASE_PASSWD=Blockchain4ever
+#      - LOG_LEVEL_APP=debug
+#      - LOG_LEVEL_DB=debug
+#      - LOG_LEVEL_CONSOLE=debug
+#      - LOG_CONSOLE_STDOUT=true
+#      - DISCOVERY_AS_LOCALHOST=false
+#    volumes:
+#      - ./explorer/config.json:/opt/explorer/app/platform/fabric/config.json
+#      - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile/
+#      - ./crypto-config/:/tmp/crypto/
+#      -  explorer-vm:/opt/explorer/wallet
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - orderer.test.hu
+#      - orderer1.test.hu
+#      - orderer2.test.hu
+#      - peer0.test.hu
+#      - explorerdb.test.hu
+#    networks:
+#      - test-net
+
+#  prometheus.test.hu:
+#    container_name: prometheus.test.hu
+#    image: prom/prometheus
+#    volumes:
+#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - prometheus-vm:/prometheus
+#    ports:
+#      - 9090:9090
+#    depends_on:
+#      - orderer.test.hu
+#      - orderer1.test.hu
+#      - orderer2.test.hu
+#      - peer0.test.hu
+#      - explorerdb.test.hu
+#    networks:
+#      - test-net
+
+#  grafana.test.hu:
+#    container_name: grafana.test.hu
+#    image: grafana/grafana
+#    volumes:
+#      - granafa-vm:/var/lib/grafana
+#    ports:
+#    - 3000:3000
+#    depends_on:
+#      - orderer.test.hu
+#      - orderer1.test.hu
+#      - orderer2.test.hu
+#      - peer0.test.hu
+#      - explorerdb.test.hu
+#    networks:
+#      - test-net
