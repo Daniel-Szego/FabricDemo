@@ -1,0 +1,57 @@
+{
+	"name": "test-network",
+	"version": "1.0.0",
+	"client": {
+		"tlsEnable": true,
+		"adminCredential": {
+			"id": "exploreradmin",
+			"password": "Blockchain4ever"
+		},
+		"enableAuthentication": true,
+		"organization": "Org1MSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"testchannel": {
+			"peers": {
+				"peer0.org1.test.hu": {}
+			},
+			"connection": {
+				"timeout": {
+					"peer": {
+						"endorser": "6000",
+						"eventHub": "6000",
+						"eventReg": "6000"
+					}
+				}
+			}
+		}
+		},
+	"organizations": {
+		"Org1MSP": {
+			"mspid": "Org1MSP",
+			"adminPrivateKey": {
+				"path": "/tmp/crypto/peerOrganizations/org1.test.hu/users/Admin@org1.test.hu/msp/keystore/priv_sk"
+			},
+			"peers": ["peer0.org1.test.hu"],
+			"signedCert": {
+				"path": "/tmp/crypto/peerOrganizations/org1.test.hu/users/Admin@org1.test.hu/msp/signcerts/Admin@org1.test.hu-cert.pem"
+			}
+		}
+	},
+	"peers": {
+		"peer0.org1.test.hu": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls/ca.crt"
+			},
+			"url": "grpcs://peer0.org1.test.hu:7051"
+		}
+	}
+}

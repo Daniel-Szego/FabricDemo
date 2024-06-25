@@ -118,6 +118,25 @@ fabric-ca-client register -d --id.name Admin@org1.test.hu --id.secret xxx \
 
 fabric-ca-client enroll -d -u http://Admin@org1.test.hu:xxx@ca.org1.test.hu:7054 --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=og1MSP" --csr.hosts peer1.org1.test.hu --mspdir ./testcert --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
 
+
+echo ""
+echo "##### Start explorer db #########"
+echo ""
+
+# Starting hyperledger fabricchannel
+docker-compose -f docker-compose.yml up -d  \
+explorerdb.test.hu
+
+sleep 20
+
+echo ""
+echo "##### Start explorer #########"
+echo ""
+
+# Starting hyperledger fabricchannel
+docker-compose -f docker-compose.yml up -d  \
+explorer.test.hu
+
 echo
 echo " _____   _   _   ____   "
 echo "| ____| | \ | | |  _ \  "
