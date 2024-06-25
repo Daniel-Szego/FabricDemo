@@ -370,22 +370,22 @@ services:
     networks:
       - test-net
 
-#  prometheus.test.hu:
-#    container_name: prometheus.test.hu
-#    image: prom/prometheus
-#    volumes:
-#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#      - prometheus-vm:/prometheus
-#    ports:
-#      - 9090:9090
-#    depends_on:
-#      - orderer.test.hu
-#      - orderer1.test.hu
-#      - orderer2.test.hu
-#      - peer0.test.hu
-#      - explorerdb.test.hu
-#    networks:
-#      - test-net
+  prometheus.test.hu:
+    container_name: prometheus.test.hu
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-vm:/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - orderer.test.hu
+      - orderer1.test.hu
+      - orderer2.test.hu
+      - peer0.org1.test.hu
+      - explorerdb.test.hu
+    networks:
+      - test-net
 
 #  grafana.test.hu:
 #    container_name: grafana.test.hu

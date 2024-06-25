@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+- job_name: 'prometheus'
+  scrape_interval: 10s
+  static_configs:
+  - targets: ['localhost:9090']
+
+- job_name: 'hyperledger_metrics'
+  scrape_interval: 10s
+  static_configs:
+  - targets: ['ca.org1.test.hu:9443','orderer.test.hu:8443','orderer1.test.hu:8453','orderer2.test.hu:8463','peer0.org1.test.hu:9543']

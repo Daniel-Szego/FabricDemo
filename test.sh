@@ -137,6 +137,14 @@ echo ""
 docker-compose -f docker-compose.yml up -d  \
 explorer.test.hu
 
+echo ""
+echo "##### Start prometheus #########"
+echo ""
+
+# Starting prometheus
+docker-compose -f docker-compose.yml up -d  \
+prometheus.test.hu
+
 echo
 echo " _____   _   _   ____   "
 echo "| ____| | \ | | |  _ \  "
