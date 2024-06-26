@@ -145,6 +145,62 @@ echo ""
 docker-compose -f docker-compose.yml up -d  \
 prometheus.test.hu
 
+echo ""
+echo "##### Modify on-chain config #########"
+echo ""
+
+# https://medium.com/coinmonks/modifying-the-batch-size-in-hyperledger-fabric-v2-2-3ec2dd779e2b
+
+# fetch config
+docker exec cli.org1.test.hu \
+peer channel fetch config config_block.pb \
+-o orderer.test.hu:7050 -c testchannel \
+--tls --cafile /etc/hyperledger/crypto/orderer/msp/tlscacerts/tlsca.test.hu-cert.pem
+
+# convert to json
+docker exec cli.org1.test.hu \
+sh -c 'configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > config.json'
+
+MAXBATCHSIZEPATH=".channel_group.groups.Orderer.values.BatchSize.value.max_message_count"
+
+# check value
+docker exec -e MAXBATCHSIZEPATH=$MAXBATCHSIZEPATH cli.org1.test.hu \
+sh -c 'jq "$MAXBATCHSIZEPATH" config.json'
+
+# update value
+docker exec -e MAXBATCHSIZEPATH=$MAXBATCHSIZEPATH cli.org1.test.hu \
+sh -c 'jq "$MAXBATCHSIZEPATH = 20" config.json > modified_config.json'
+
+# convert to protobuf
+docker exec cli.org1.test.hu sh -c 'configtxlator proto_encode --input config.json --type common.Config --output config.pb'
+
+docker exec cli.org1.test.hu sh -c 'configtxlator proto_encode --input modified_config.json --type common.Config --output modified_config.pb'
+
+# data calculation
+docker exec -e CHANNEL_NAME=testchannel cli.org1.test.hu sh -c 'configtxlator compute_update --channel_id $CHANNEL_NAME --original config.pb --updated modified_config.pb --output final_update.pb'
+
+# add update to envelop
+docker exec cli.org1.test.hu sh -c 'configtxlator proto_decode --input final_update.pb --type common.ConfigUpdate | jq . > final_update.json'
+docker exec cli.org1.test.hu sh -c 'echo "{\"payload\":{\"header\":{\"channel_header\":{\"channel_id\":\"testchannel\", \"type\":2}},\"data\":{\"config_update\":"$(cat final_update.json)"}}}" | jq . >  header_in_envolope.json'
+docker exec cli.org1.test.hu sh -c 'configtxlator proto_encode --input header_in_envolope.json --type common.Envelope --output final_update_in_envelope.pb'
+
+# sign
+docker exec cli.org1.test.hu sh -c 'peer channel signconfigtx -f final_update_in_envelope.pb'
+
+# send update
+
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/test.hu/orderers/orderer.test.hu/tls/ca.crt
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/test.hu/users/Admin@test.hu/msp
+CORE_PEER_ADDRESS=orderer.test.hu:7050
+
+docker exec \
+-e CORE_PEER_LOCALMSPID=OrdererMSP \
+-e CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE} \
+-e CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH \
+-e CORE_PEER_ADDRESS=$CORE_PEER_ADDRESS \
+cli.org1.test.hu sh \
+-c 'peer channel update -f final_update_in_envelope.pb -c testchannel -o orderer.test.hu:7050 --tls --cafile /etc/hyperledger/crypto/orderer/msp/tlscacerts/tlsca.test.hu-cert.pem' 
+
 echo
 echo " _____   _   _   ____   "
 echo "| ____| | \ | | |  _ \  "
