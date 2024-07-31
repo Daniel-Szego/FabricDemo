@@ -42,7 +42,7 @@ async function main() {
 
         // Evaluate the specified transaction.
         // QueryBiztositas
-        const result = await contract.evaluateTransaction('GetState', 'testkey456');
+        const result = await contract.evaluateTransaction('GetStateKey', 'testkey777');
         console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
         // Disconnect from the gateway.

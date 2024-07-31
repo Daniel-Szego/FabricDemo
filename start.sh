@@ -161,7 +161,7 @@ peer lifecycle chaincode commit \
 --channelID testchannel --name test --version 1.0 --sequence 1 \
 --tls --cafile /etc/hyperledger/crypto/orderer/msp/tlscacerts/tlsca.test.hu-cert.pem \
 --peerAddresses peer0.org1.test.hu:7051 \
---tlsRootCertFiles /etc/hyperledger/crypto/peer/tls/ca.crt \
+--tlsRootCertFiles /etc/hyperledger/crypto/peer/tls/ca.crt
 
 sleep 20
 

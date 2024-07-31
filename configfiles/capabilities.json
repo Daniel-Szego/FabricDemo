@@ -1,0 +1,31 @@
+{
+    "channel": {
+        "mod_policy": "Admins",
+            "value": {
+                "capabilities": {
+                    "V2_5": {}
+                }
+            },
+        "version": "0"
+    },
+    "orderer": {
+        "mod_policy": "Admins",
+            "value": {
+                "capabilities": {
+                    "V2_5": {}
+                }
+            },
+        "version": "0"
+    },
+    "application": {
+        "mod_policy": "Admins",
+            "value": {
+                "capabilities": {
+                    "V2_5": {}
+                }
+            },
+        "version": "0"
+    }
+  }
+
+  

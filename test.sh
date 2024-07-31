@@ -124,8 +124,8 @@ echo "##### Start explorer db #########"
 echo ""
 
 # Starting hyperledger fabricchannel
-docker-compose -f docker-compose.yml up -d  \
-explorerdb.test.hu
+#docker-compose -f docker-compose.yml up -d  \
+#explorerdb.test.hu
 
 sleep 20
 
@@ -134,16 +134,16 @@ echo "##### Start explorer #########"
 echo ""
 
 # Starting hyperledger fabricchannel
-docker-compose -f docker-compose.yml up -d  \
-explorer.test.hu
+#docker-compose -f docker-compose.yml up -d  \
+#explorer.test.hu
 
 echo ""
 echo "##### Start prometheus #########"
 echo ""
 
 # Starting prometheus
-docker-compose -f docker-compose.yml up -d  \
-prometheus.test.hu
+#docker-compose -f docker-compose.yml up -d  \
+#prometheus.test.hu
 
 echo ""
 echo "##### Modify on-chain config #########"

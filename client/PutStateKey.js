@@ -42,8 +42,8 @@ async function main() {
         // Submit the specified transaction.
         // CreateBiztositas transaction - requires 1 argument, ex: ('createCar', 'Testbiztositas123')
         // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR12', 'Dave')
-        await contract.submitTransaction('PutStateKey', 'testkey456',"testdata123");
-        console.log('Transaction has been submitted');
+        await contract.submitTransaction('PutStateKey', 'testkey777','oktatas');
+        console.log('Transaction has been submitted put state key');
 
         // Disconnect from the gateway.
         await gateway.disconnect();

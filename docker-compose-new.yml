@@ -19,7 +19,7 @@ networks:
 services:
 
   ca.org1.test.hu:
-    image: hyperledger/fabric-ca:1.5.0
+    image: hyperledger/fabric-ca:latest
     container_name: ca.org1.test.hu
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
@@ -47,7 +47,7 @@ services:
 
   orderer.test.hu:
     container_name: orderer.test.hu
-    image: hyperledger/fabric-orderer:2.2.15
+    image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -64,17 +64,17 @@ services:
       - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
-#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
-#      - ORDERER_ADMIN_TLS_ENABLED=true
-#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
       - ORDERER_METRICS_PROVIDER=prometheus
       - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
-#      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
+      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
       - ORDERER_GENERAL_LISTENPORT=7050
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
@@ -82,7 +82,7 @@ services:
     ports:
       - 7050:7050
       - 8443:8443
-#      - 9443:9443
+      - 9443:9443
     volumes:
         - ./config/genesis.block:/var/hyperledger/orderer/genesis.block
         - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/msp:/var/hyperledger/orderer/msp
@@ -93,7 +93,7 @@ services:
 
   orderer1.test.hu:
     container_name: orderer1.test.hu
-    image: hyperledger/fabric-orderer:2.2.15
+    image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -110,17 +110,17 @@ services:
       - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
-#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
-#      - ORDERER_ADMIN_TLS_ENABLED=true
-#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
       - ORDERER_METRICS_PROVIDER=prometheus
       - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
-#      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
+      - ORDERER_OPERATIONS_ADMINADDRESS=0.0.0.0:9443
       - ORDERER_GENERAL_LISTENPORT=7050
       - FABRIC_CFG_PATH=/etc/hyperledger/fabric
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderers
@@ -128,7 +128,7 @@ services:
     ports:
       - 7060:7050
       - 8453:8443
- #     - 9453:9443
+      - 9453:9443
     volumes:
         - ./config/genesis.block:/var/hyperledger/orderer/genesis.block
         - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer1.test.hu/msp:/var/hyperledger/orderer/msp
@@ -139,7 +139,7 @@ services:
 
   orderer2.test.hu:
     container_name: orderer2.test.hu
-    image: hyperledger/fabric-orderer:2.2.15
+    image: hyperledger/fabric-orderer:latest
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -156,14 +156,14 @@ services:
       - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_TLS_ENABLED=true
-#      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
-#      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
-#      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-#      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-#      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-#      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      - ORDERER_ADMIN_TLS_ENABLED=true
+      - ORDERER_GENERAL_BOOTSTRAPMETHOD=none
+      - ORDERER_CHANNELPARTICIPATION_ENABLED=true
+      - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_ADMIN_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
       - ORDERER_METRICS_PROVIDER=prometheus
       - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
       - ORDERER_GENERAL_LISTENPORT=7050
@@ -184,7 +184,7 @@ services:
 
   peer0.org1.test.hu:
     container_name: peer0.org1.test.hu
-    image: hyperledger/fabric-peer:2.2.15
+    image: hyperledger/fabric-peer:latest
     dns_search: .
     environment:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
@@ -216,7 +216,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=Blockchain4ever
       - CORE_METRICS_PROVIDER=prometheus
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9443
-#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0.org1.test.hu"}
+      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0.org1.test.hu"}
 #      - CORE_CHAINCODE_EXTERNALBUILDERS_PATH=/external-builder
 #      - CORE_CHAINCODE_EXTERNALBUILDERS_NAME=external-builder
       - CORE_PEER_GATEWAY_ENABLED=true
@@ -248,7 +248,7 @@ services:
 
   couchdb0.org1.test.hu:
     container_name: couchdb0.org1.test.hu
-    image: hyperledger/fabric-couchdb:0.4.22
+    image: couchdb:3.3.3
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
     environment:
@@ -263,7 +263,7 @@ services:
 
   cli.org1.test.hu:
     container_name: cli.org1.test.hu
-    image: hyperledger/fabric-tools:2.2.15
+    image: hyperledger/fabric-tools:latest
     tty: true
     dns_search: .
     environment:
@@ -289,6 +289,7 @@ services:
         - ./crypto-config/ordererOrganizations/test.hu/orderers/orderer.test.hu/msp:/etc/hyperledger/crypto/orderer/msp
         - ./crypto-config/peerOrganizations/org1.test.hu/peers/peer0.org1.test.hu/tls:/etc/hyperledger/crypto/peer/tls
         - ./chaincode:/chaincode
+        - ./configfiles/:/configfiles/
     networks:
       - test-net
     depends_on:
@@ -322,70 +323,70 @@ services:
 #        - ./crypto-config/peerOrganizations/test.hu/ca/:/etc/hyperledger/crypto/peer/ca
 #        - ./crypto-config/ordererOrganizations/test.hu/orderers:/etc/hyperledger/crypto/orderers
 
-#  explorerdb.test.hu:
-#    image: ghcr.io/hyperledger-labs/explorer-db:2.0.0
-#    container_name: explorerdb.test.hu
-#    hostname: explorerdb.test.hu
-#    environment:
-#      - DATABASE_DATABASE=fabricexplorer
-#      - DATABASE_USERNAME=hppoc
-#      - DATABASE_PASSWORD=Blockchain4ever
-#    healthcheck:
-#      test: "pg_isready -h localhost -p 5432 -q -U postgres"
-#      interval: 30s
-#      timeout: 10s
-#      retries: 5
-#    volumes:
-#      - explorerdb-vm:/var/lib/postgresql/data
-#    networks:
-#      - test-net
+  explorerdb.test.hu:
+    image: ghcr.io/hyperledger-labs/explorer-db:2.0.0
+    container_name: explorerdb.test.hu
+    hostname: explorerdb.test.hu
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWORD=Blockchain4ever
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - explorerdb-vm:/var/lib/postgresql/data
+    networks:
+      - test-net
 
-#  explorer.test.hu:
-#    image: ghcr.io/hyperledger-labs/explorer:2.0.0
-#    container_name: explorer.test.hu
-#    hostname: explorer.test.hu
-#    environment:
-#      - DATABASE_HOST=explorerdb.test.hu
-#      - DATABASE_DATABASE=fabricexplorer
-#      - DATABASE_USERNAME=hppoc
-#      - DATABASE_PASSWD=Blockchain4ever
-#      - LOG_LEVEL_APP=debug
-#      - LOG_LEVEL_DB=debug
-#      - LOG_LEVEL_CONSOLE=debug
-#      - LOG_CONSOLE_STDOUT=true
-#      - DISCOVERY_AS_LOCALHOST=false
-#    volumes:
-#      - ./explorer/config.json:/opt/explorer/app/platform/fabric/config.json
-#      - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile/
-#      - ./crypto-config/:/tmp/crypto/
-#      -  explorer-vm:/opt/explorer/wallet
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      - orderer.test.hu
-#      - orderer1.test.hu
-#      - orderer2.test.hu
-#      - peer0.org1.test.hu
-#      - explorerdb.test.hu
-#    networks:
-#      - test-net
+  explorer.test.hu:
+    image: ghcr.io/hyperledger-labs/explorer:2.0.0
+    container_name: explorer.test.hu
+    hostname: explorer.test.hu
+    environment:
+      - DATABASE_HOST=explorerdb.test.hu
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWD=Blockchain4ever
+      - LOG_LEVEL_APP=debug
+      - LOG_LEVEL_DB=debug
+      - LOG_LEVEL_CONSOLE=debug
+      - LOG_CONSOLE_STDOUT=true
+      - DISCOVERY_AS_LOCALHOST=false
+    volumes:
+      - ./explorer/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile/
+      - ./crypto-config/:/tmp/crypto/
+      -  explorer-vm:/opt/explorer/wallet
+    ports:
+      - 8080:8080
+    depends_on:
+      - orderer.test.hu
+      - orderer1.test.hu
+      - orderer2.test.hu
+      - peer0.org1.test.hu
+      - explorerdb.test.hu
+    networks:
+      - test-net
 
-#  prometheus.test.hu:
-#    container_name: prometheus.test.hu
-#    image: prom/prometheus
-#    volumes:
-#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#      - prometheus-vm:/prometheus
-#    ports:
-#      - 9090:9090
-#    depends_on:
-#      - orderer.test.hu
-#      - orderer1.test.hu
-#      - orderer2.test.hu
-#      - peer0.org1.test.hu
-#      - explorerdb.test.hu
-#    networks:
-#      - test-net
+  prometheus.test.hu:
+    container_name: prometheus.test.hu
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-vm:/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - orderer.test.hu
+      - orderer1.test.hu
+      - orderer2.test.hu
+      - peer0.org1.test.hu
+      - explorerdb.test.hu
+    networks:
+      - test-net
 
 #  grafana.test.hu:
 #    container_name: grafana.test.hu

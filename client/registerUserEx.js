@@ -47,11 +47,11 @@ async function main() {
 
         // Register the user, enroll the user, and import the new identity into the wallet.
         const secret = await ca.register({
-            enrollmentID: 'appUser',
+            enrollmentID: 'appUser2',
             role: 'client'
         }, adminUser);
         const enrollment = await ca.enroll({
-            enrollmentID: 'appUser',
+            enrollmentID: 'appUser2',
             enrollmentSecret: secret
         });
         const x509Identity = {
@@ -62,7 +62,7 @@ async function main() {
             mspId: 'Org1MSP',
             type: 'X.509',
         };
-        await wallet.put('appUser', x509Identity);
+        await wallet.put('appUser2', x509Identity);
         console.log('Successfully registered and enrolled admin user "appUser" and imported it into the wallet');
 
     } catch (error) {
