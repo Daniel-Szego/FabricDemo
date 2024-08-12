@@ -15,6 +15,7 @@ rm -fr crypto-config/*
 rm -fr idemix-config/*
 rm -ft certs/*
 rm -fr testcert/*
+rm -fr testcerts/*
 
 # remove chaincode docker images
 docker rm $(docker ps -aq)

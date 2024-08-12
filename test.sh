@@ -99,25 +99,6 @@ npm run getkey
 
 cd ..
 
-echo ""
-echo "##### Test enroll cert #########"
-echo ""
-
-ACTUALDIR=$(dirname $(readlink -f $0))
-echo "actual directory: ${ACTUALDIR}"
-
-export FABRIC_CA_CLIENT_TLS_CERTFILES=${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
-export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcert/
-
-# enroll admin
-fabric-ca-client enroll -d -u http://test:Blockchain4ever@ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem 
-
-fabric-ca-client register -d --id.name Admin@org1.test.hu --id.secret xxx \
---id.type admin --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
---id.attrs hf.Registrar.Roles=client,hf.Registrar.Attributes=*,hf.Revoker=true,hf.GenCRL=true,admin=true:ecert,abac.init=true” -u http://ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
-
-fabric-ca-client enroll -d -u http://Admin@org1.test.hu:xxx@ca.org1.test.hu:7054 --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=og1MSP" --csr.hosts peer1.org1.test.hu --mspdir ./testcert --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
-
 
 echo ""
 echo "##### Start explorer db #########"
@@ -200,6 +181,143 @@ docker exec \
 -e CORE_PEER_ADDRESS=$CORE_PEER_ADDRESS \
 cli.org1.test.hu sh \
 -c 'peer channel update -f final_update_in_envelope.pb -c testchannel -o orderer.test.hu:7050 --tls --cafile /etc/hyperledger/crypto/orderer/msp/tlscacerts/tlsca.test.hu-cert.pem' 
+
+echo ""
+echo "##### Test enroll certs #########"
+echo ""
+
+ACTUALDIR=$(dirname $(readlink -f $0))
+echo "actual directory: ${ACTUALDIR}"
+
+# create test directory structure
+mkdir -p ${ACTUALDIR}/testcerts
+mkdir -p ${ACTUALDIR}/testcerts/testcert
+mkdir -p ${ACTUALDIR}/testcerts/peer
+mkdir -p ${ACTUALDIR}/testcerts/peer/sign
+mkdir -p ${ACTUALDIR}/testcerts/peer/sign2
+mkdir -p ${ACTUALDIR}/testcerts/peer/tls
+mkdir -p ${ACTUALDIR}/testcerts/peer/tls2
+mkdir -p ${ACTUALDIR}/testcerts/peer/admin
+mkdir -p ${ACTUALDIR}/testcerts/peer/admintls
+mkdir -p ${ACTUALDIR}/testcerts/peer/admin2
+mkdir -p ${ACTUALDIR}/testcerts/peer/admintls2
+
+export FABRIC_CA_CLIENT_TLS_CERTFILES=${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/testcert
+
+# enroll admin testcert
+fabric-ca-client enroll -d -u http://test:Blockchain4ever@ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem 
+
+fabric-ca-client register -d --id.name Admin@org1.test.hu --id.secret xxx \
+--id.type admin --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--id.attrs hf.Registrar.Roles=client,hf.Registrar.Attributes=*,hf.Revoker=true,hf.GenCRL=true,admin=true:ecert,abac.init=true” -u http://ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+fabric-ca-client enroll -d -u http://Admin@org1.test.hu:xxx@ca.org1.test.hu:7054 --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=og1MSP" --csr.hosts peer1.org1.test.hu --mspdir ./testcerts/testcert --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+##########
+## PEER ##
+##########
+
+### Peer register ###
+
+# register peer identity for the organization
+fabric-ca-client register -d --id.name peer0-org1 --id.secret peer0PW \
+--id.type peer \
+--id.attrs '"hf.Registrar.Roles=peer"' \
+--csr.cn "peer0.org1.test.hu" \
+--csr.hosts "peer0.org1.test.hu" --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--id.affiliation "org1" \
+-u http://ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+# Peer signcert
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/sign
+
+# enroll peer signcert for the organization
+fabric-ca-client enroll -d -u http://peer0-org1:peer0PW@ca.org1.test.hu:7054 \
+--csr.hosts peer0.org1.test.hu \
+--csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--mspdir ${ACTUALDIR}/testcerts/peer/sign \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+# Peer TLS
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/tls
+
+# enroll peer TLS cert for the organization
+fabric-ca-client enroll -d -u http://peer0-org1:peer0PW@ca.org1.test.hu:7054 \
+--enrollment.profile tls --csr.hosts peer0.org1.test.hu \
+--mspdir ${ACTUALDIR}/testcerts/peer/tls \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+sleep 60
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/sign2
+
+# reenroll peer identity for the organization
+fabric-ca-client enroll -d -u http://peer0-org1:peer0PW@ca.org1.test.hu:7054 \
+--csr.hosts peer0.org1.test.hu \
+--csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--mspdir ${ACTUALDIR}/testcerts/peer/sign2 \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/tls2
+
+# reenroll peer TLS cert for the organization
+fabric-ca-client enroll -d -u http://peer0-org1:peer0PW@ca.org1.test.hu:7054 \
+--enrollment.profile tls --csr.hosts peer0.org1.test.hu \
+--mspdir ${ACTUALDIR}/testcerts/peer/tls2 \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+##########
+## ORG1 admin ##
+##########
+
+export FABRIC_CA_CLIENT_TLS_CERTFILES=${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/testcert
+
+fabric-ca-client enroll -d -u http://test:Blockchain4ever@ca.org1.test.hu:7054 --tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem 
+
+# register Org admin - Org1
+fabric-ca-client register -d --id.name Admin2@org1.test.hu --id.secret orgadminPW \
+--id.type admin --csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--id.attrs hf.Registrar.Roles=client,hf.Registrar.Attributes=*,hf.Revoker=true,hf.GenCRL=true,admin=true:ecert,abac.init=true” \
+-u http://ca.org1.test.hu:7054 \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/admin
+
+# enroll org admin
+fabric-ca-client enroll -d -u http://Admin2@org1.test.hu:orgadminPW@ca.org1.test.hu:7054 \
+--csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--mspdir ${ACTUALDIR}/testcerts/peer/admin \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/admintls
+
+# enroll Org1 - Admin - TLS
+fabric-ca-client enroll -d -u http://Admin2@org1.test.hu:orgadminPW@ca.org1.test.hu:7054 \
+--enrollment.profile tls --csr.hosts "org1.test.hu" \
+--mspdir ${ACTUALDIR}/testcerts/peer/admintls \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+sleep 60
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/admin2
+
+# reenroll org admin
+fabric-ca-client enroll -d -u http://Admin2@org1.test.hu:orgadminPW@ca.org1.test.hu:7054 \
+--csr.names "C=HU,ST=Budapest,L=Budapest,O=org1.test.hu,OU=org1MSP" \
+--mspdir ${ACTUALDIR}/testcerts/peer/admin2 \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
+export FABRIC_CA_CLIENT_HOME=${ACTUALDIR}/testcerts/peer/admintls2
+
+# reenroll Org1 - Admin - TLS
+fabric-ca-client enroll -d -u http://Admin2@org1.test.hu:orgadminPW@ca.org1.test.hu:7054 \
+--enrollment.profile tls --csr.hosts "org1.test.hu" \
+--mspdir ${ACTUALDIR}/testcerts/peer/admintls2 \
+--tls.certfiles ${ACTUALDIR}/crypto-config/peerOrganizations/org1.test.hu/tlsca/tlsca.org1.test.hu-cert.pem
+
 
 echo
 echo " _____   _   _   ____   "

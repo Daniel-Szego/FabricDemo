@@ -19,7 +19,7 @@ networks:
 services:
 
   ca.org1.test.hu:
-    image: hyperledger/fabric-ca:latest
+    image: hyperledger/fabric-ca:1.5.10
     container_name: ca.org1.test.hu
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
@@ -47,7 +47,7 @@ services:
 
   orderer.test.hu:
     container_name: orderer.test.hu
-    image: hyperledger/fabric-orderer:latest
+    image: hyperledger/fabric-orderer:2.5.7
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -93,7 +93,7 @@ services:
 
   orderer1.test.hu:
     container_name: orderer1.test.hu
-    image: hyperledger/fabric-orderer:latest
+    image: hyperledger/fabric-orderer:2.5.7
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -139,7 +139,7 @@ services:
 
   orderer2.test.hu:
     container_name: orderer2.test.hu
-    image: hyperledger/fabric-orderer:latest
+    image: hyperledger/fabric-orderer:2.5.7
     environment:
       - ORDERER_GENERAL_LOGLEVEL=WARNING
       - FABRIC_LOGGING_SPEC=WARNING
@@ -184,7 +184,7 @@ services:
 
   peer0.org1.test.hu:
     container_name: peer0.org1.test.hu
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:2.5.7
     dns_search: .
     environment:
       - CORE_CHAINCODE_EXECUTETIMEOUT=300s
@@ -216,7 +216,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=Blockchain4ever
       - CORE_METRICS_PROVIDER=prometheus
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9443
-      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0.org1.test.hu"}
+#      - CHAINCODE_AS_A_SERVICE_BUILDER_CONFIG={"peername":"peer0.org1.test.hu"}
 #      - CORE_CHAINCODE_EXTERNALBUILDERS_PATH=/external-builder
 #      - CORE_CHAINCODE_EXTERNALBUILDERS_NAME=external-builder
       - CORE_PEER_GATEWAY_ENABLED=true
@@ -263,7 +263,7 @@ services:
 
   cli.org1.test.hu:
     container_name: cli.org1.test.hu
-    image: hyperledger/fabric-tools:latest
+    image: hyperledger/fabric-tools:2.5.7
     tty: true
     dns_search: .
     environment:

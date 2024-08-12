@@ -33,7 +33,7 @@ async function main() {
     const contract = network.getContract("test");
 
     const putResult = await contract.submitTransaction(
-      'PutState', 'TestData444'
+      'PutState', 'TestData555'
     )
     console.log("Put result:", utf8Decoder.decode(putResult))
 
